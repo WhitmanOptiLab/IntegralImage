@@ -39,14 +39,17 @@ int main() {
     double(end.tv_usec - start.tv_usec)/1000000.0;
   cout << "Time = " << elapsedtime_sec << std::endl;
 
-  float checksum = 0.0f;
+  long int checksum = 0;
   for (size_t i = 0; i < img.height(); i++) {
     for (size_t j = 0; j < img.width(); j++) {
       checksum += img[i][j];
     }
   }
 
-  cout << "IIchecksum = " << checksum << endl;
+  if (checksum == 51113437679616LL)
+    cout << "checksum pass" << endl;
+  else
+    cout << "CHECKSUM FAIL" << endl;
 
   return 0;
 }

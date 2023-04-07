@@ -9,7 +9,7 @@ integralImage: integralImage.o
 	g++ -O3 $^ -o $@ -fopenmp
 
 %.o : %.cpp image.hpp Makefile
-	g++ -c -o $@ $< -O3
+	g++ -c -o $@ $< -O3 -fopenmp
 
 .PHONY: clean
 clean:
