@@ -5,15 +5,16 @@
 using namespace std;
 
 void IntegralImage(Image<int>& img) {
-  for (int i = 0; i < img.height(); i++) {
+  for (int i = 1; i < img.height(); i++) {
+    img[i][0] = img[i][0] + img[i-1][0];
     for (int j = 1; j < img.width(); j++) {
-      img[i][j] = img[i][j] + img[i][j-1];
+      img[i][j] = img[i][j] + img[i-1][j];
+      img[i-1][j] = img[i-1][j] + img[i-1][j-1];
     }
   }
-  for (int i = 1; i < img.height(); i++) {
-    for (int j = 0; j < img.width(); j++) {
-      img[i][j] = img[i][j] + img[i-1][j];
-    }
+  int i = img.height()-1;
+  for (int j = 1; j < img.width(); j++) {
+    img[i][j] = img[i][j] + img[i][j-1];
   }
 }
 
