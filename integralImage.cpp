@@ -5,34 +5,41 @@
 
 using namespace std;
 
+
+class CumulativeSum {
+ public:
+  static constexpr int32x4_t zero = {0, 0, 0, 0};
+  CumulativeSum() { sum = zero; }
+
+  int32x4_t extend(int32x4_t data) {
+    data = vaddq_s32(data, vextq_s32(zero, data, 3));
+    data = vaddq_s32(data, vextq_s32(zero, data, 2));
+    data = vaddq_s32(data, sum);
+    sum = vdupq_laneq_s32(data, 3);
+    return data;
+  }
+
+ private:
+  int32x4_t sum;
+};
+
 void IntegralImage(Image<int>& img) {
   int32x4_t zero = { 0, 0, 0, 0 };
   for (size_t i = 1; i < img.height(); i++) {
     int* prev_row = img[i-1];
     int* curr_row = img[i];
-    int32x4_t cum_sum = zero;
+    CumulativeSum csum;
     for (size_t j = 0; j < img.width(); j+=4) {
       int32x4_t prev = vld1q_s32(prev_row+j);
       int32x4_t curr = vld1q_s32(curr_row+j);
       vst1q_s32(curr_row+j, vaddq_s32(prev, curr));
-      //Cumulative sum
-      prev = vaddq_s32(prev, vextq_s32(zero, prev, 3));
-      prev = vaddq_s32(prev, vextq_s32(zero, prev, 2));
-      prev = vaddq_s32(prev, cum_sum);
-      cum_sum = vdupq_laneq_s32(prev, 3);
-      vst1q_s32(prev_row+j, prev);
+      vst1q_s32(prev_row+j, csum.extend(prev));
     }
   }
   int* curr_row = img[img.height()-1];
-  int32x4_t cum_sum = zero;
+  CumulativeSum csum;
   for (size_t j = 0; j < img.width(); j+=4) {
-    int32x4_t curr = vld1q_s32(curr_row+j);
-    //Cumulative sum
-    curr = vaddq_s32(curr, vextq_s32(zero, curr, 3));
-    curr = vaddq_s32(curr, vextq_s32(zero, curr, 2));
-    curr = vaddq_s32(cum_sum, curr);
-    cum_sum = vdupq_laneq_s32(curr, 3);
-    vst1q_s32(curr_row+j, curr);
+    vst1q_s32(curr_row+j, csum.extend(vld1q_s32(curr_row+j)));
   }
 }
 
