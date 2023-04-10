@@ -45,8 +45,8 @@ class Image {
     dealloc_array();
   };
 
-  int width() const { return _width; }
-  int height() const { return _height; }
+  size_t width() const { return _width; }
+  size_t height() const { return _height; }
 
  protected:
   void dealloc_array() {
@@ -61,7 +61,7 @@ class Image {
     else
       _array = NULL;
   }
-  int _width, _height;
+  size_t _width, _height;
   Pix *_array;
 };
 
